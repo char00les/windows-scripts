@@ -1,0 +1,53 @@
+    
+    $unwantedApps = (
+        "DellInc.DellSupportAssistforPCs",
+        "DellInc.DellDigitalDelivery",
+        "DellInc.PartnerPromo",
+        "Microsoft.BingWeather",
+        "Microsoft.GetHelp",
+        "Microsoft.Getstarted",
+        "Microsoft.Messaging",
+        "Microsoft.Microsoft3DViewer",
+        "Microsoft.MicrosoftOfficeHub",
+        "Microsoft.MicrosoftSolitaireCollection",
+        "Microsoft.MixedReality.Portal",
+        "Microsoft.Office.OneNote",
+        "Microsoft.OneConnect",
+        "Microsoft.People",
+        "Microsoft.Print3D",
+        "Microsoft.SkypeApp",
+        "microsoft.windowscommunicationsapps",
+        "Microsoft.WindowsFeedbackHub",
+        "Microsoft.WindowsSoundRecorder",
+        "Microsoft.Xbox.TCUI",
+        "Microsoft.XboxApp",
+        "Microsoft.XboxGameOverlay",
+        "Microsoft.XboxGamingOverlay",
+        "Microsoft.XboxIdentityProvider",
+        "Microsoft.XboxSpeechToTextOverlay",
+        "Microsoft.YourPhone",
+        "Microsoft.ZuneMusic",
+        "Microsoft.ZuneVideo"    
+    )
+
+    # Remove advertising.xaml due to multiple outs, x32 & x64, fails with current foreach loop
+    try {
+        Get-AppxPackage -Name microsoft.advertising.xaml -ErrorAction SilentlyContinue | Remove-AppxPackage -AllUsers
+    }
+    catch {
+        Write-Host 'Failed to remove microsoft.advertising.xaml, or it has already been uninstalled'
+    }
+
+    # Remove user apps
+    foreach ($a in $unwantedApps) {
+        $pkg = Get-AppXPackage -Name $a -ErrorAction SilentlyContinue
+        if ($null -ne $pkg) {
+            try {
+                Write-Host "Removing app: $($a)" -ForegroundColor Green
+                Remove-AppxPackage -Package $pkg
+            }
+            catch {
+                Write-Host "Removed app: $($a) failed" -ForegroundColor Yellow
+            }
+        }
+    }
