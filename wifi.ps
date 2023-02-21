@@ -1,0 +1,26 @@
+#Getting Wifi Info. Using Powershell
+
+
+#Show what current profile is available
+netsh wlan show profile
+
+#Show what your password 
+netsh wlan show profile name="<SSID>" key=clear
+findstr /i "SSID key"
+
+#iterating over all connections
+netsh wlan export profile key=clear folder=.\profiles
+
+
+#Transfer profiles to another PC 
+
+netsh wlan add profile filename="<XML-filename>" user=current
+
+#Transfer profiles to another PC - More than one
+for %a in (*.xml) do netsh wlan add profile filename="%a"
+
+#Transfer profiles to another PC - More than one - Powershell
+Get-ChildItem *.xml | foreach {netsh wlan add profile filename="$_."}
+
+netsh.exe wlan show interfaces | findstr /i "name"
+netsh wlan add profile filename=MyWi-Fi.xml interface="Wi-Fi"
